@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="classic" data-font="georgia">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseñador de Historietas PRO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bangers&family=Cinzel+Decorative&family=Creepster&family=Comic+Neue&family=Orbitron&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            --footer-height: 34px;
+            --page-width: 45vw;
+            --book-font-family: 'Georgia', serif;
+        }
+
+        /* -- Font Styles -- */
+        [data-font="georgia"] {
+            --book-font-family: 'Georgia', serif;
+        }
+
+        [data-font="fantasy"] {
+            --book-font-family: 'Cinzel Decorative', cursive;
+        }
+
+        [data-font="horror"] {
+            --book-font-family: 'Creepster', cursive;
+        }
+
+        [data-font="comic"] {
+            --book-font-family: 'Bangers', cursive;
+        }
+
+        [data-font="scifi"] {
+            --book-font-family: 'Orbitron', sans-serif;
+        }
+
+        [data-font="sans"] {
+            --book-font-family: 'Comic Neue', cursive;
+        }
+
+        [data-font="fantasy"] .page-content {
+            font-size: 0.95em;
+        }
+
+        [data-font="horror"] .page-content {
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        [data-font="comic"] .page-content {
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        [data-font="scifi"] .page-content {
+            font-size: 0.95em;
+        }
+
+        /* -- Color Themes -- */
+        [data-theme="classic"] {
+            --bg-color: #333;
+            --book-bg: #fdfaf3;
+            --text-color: #3d352a;
+            --primary-color: #6b4f3a;
+            --secondary-color: #dcd5c9;
+            --button-bg: #8c7862;
+            --button-hover-bg: #6b5b4a;
+            --subtle-bg: #f5f2eb;
+        }
+
+        [data-theme="fairy-tale"] {
+            --bg-color: #2a3d2a;
+            --book-bg: #f3efd9;
+            --text-color: #4a3b31;
+            --primary-color: #6a8a48;
+            --secondary-color: #bfae9e;
+            --button-bg: #8c7862;
+            --button-hover-bg: #6b5b4a;
+            --subtle-bg: #e6e2c6;
+        }
+
+        [data-theme="noir-comic"] {
+            --bg-color: #1a1a1a;
+            --book-bg: #ffffff;
+            --text-color: #000000;
+            --primary-color: #d40000;
+            --secondary-color: #a0a0a0;
+            --button-bg: #333333;
+            --button-hover-bg: #555555;
+            --subtle-bg: #e5e5e5;
+        }
+
+        [data-theme="superhero"] {
+            --bg-color: #0052a3;
+            --book-bg: #f0f0f0;
+            --text-color: #1e1e1e;
+            --primary-color: #e4002b;
+            --secondary-color: #fef200;
+            --button-bg: #e4002b;
+            --button-hover-bg: #b70022;
+            --subtle-bg: #e0e9f2;
+        }
+
+        [data-theme="cosmic-horror"] {
+            --bg-color: #0d0221;
+            --book-bg: #e8e6f0;
+            --text-color: #1a042e;
+            --primary-color: #6b2f7a;
+            --secondary-color: #9d8ab0;
+            --button-bg: #8e44ad;
+            --button-hover-bg: #6b2f7a;
+            --subtle-bg: #dcd6e7;
+        }
+
+        [data-theme="pastel-dream"] {
+            --bg-color: #b3e0dc;
+            --book-bg: #fff0f5;
+            --text-color: #5d4a66;
+            --primary-color: #f38fa1;
+            --secondary-color: #ffdacc;
+            --button-bg: #f38fa1;
+            --button-hover-bg: #e07a8c;
+            --subtle-bg: #fdeaf0;
+        }
+
+        [data-theme="manuscript"] {
+            --bg-color: #4a3b31;
+            --book-bg: #fbf5e7;
+            --text-color: #5d4037;
+            --primary-color: #c0392b;
+            --secondary-color: #e6b8af;
+            --button-bg: #e74c3c;
+            --button-hover-bg: #c0392b;
+            --subtle-bg: #faeee7;
+        }
+
+        [data-theme="retro"] {
+            --bg-color: #3d3d3d;
+            --book-bg: #fefbe9;
+            --text-color: #4c4c4c;
+            --primary-color: #fca311;
+            --secondary-color: #e5e5e5;
+            --button-bg: #fca311;
+            --button-hover-bg: #e8950d;
+            --subtle-bg: #fffde7;
+        }
+
+        [data-theme="steampunk"] {
+            --bg-color: #5a3e2b;
+            --book-bg: #e8d9c2;
+            --text-color: #4d3a2a;
+            --primary-color: #8b4513;
+            --secondary-color: #b8860b;
+            --button-bg: #6b4f3a;
+            --button-hover-bg: #5a3e2b;
+            --subtle-bg: #d4c3a9;
+        }
+
+        [data-theme="cyberpunk"] {
+            --bg-color: #080c13;
+            --book-bg: #f5f5fa;
+            --text-color: #222;
+            --primary-color: #00a8ff;
+            --secondary-color: #ff007f;
+            --button-bg: #ff007f;
+            --button-hover-bg: #c70064;
+            --subtle-bg: #e6f7ff;
+        }
+
+        [data-theme="vintage"] {
+            --bg-color: #4a443d;
+            --book-bg: #f5eeda;
+            --text-color: #5d534a;
+            --primary-color: #8c7853;
+            --secondary-color: #c4b7a6;
+            --button-bg: #7a6a53;
+            --button-hover-bg: #5d534a;
+            --subtle-bg: #e9e2d5;
+        }
+
+        [data-theme="jungle"] {
+            --bg-color: #233b2b;
+            --book-bg: #f0f4e8;
+            --text-color: #2f3e35;
+            --primary-color: #4caf50;
+            --secondary-color: #a5d6a7;
+            --button-bg: #66bb6a;
+            --button-hover-bg: #4caf50;
+            --subtle-bg: #e8f5e9;
+        }
+
+        [data-theme="oceanic"] {
+            --bg-color: #004d40;
+            --book-bg: #e0f7fa;
+            --text-color: #00332c;
+            --primary-color: #00796b;
+            --secondary-color: #4db6ac;
+            --button-bg: #009688;
+            --button-hover-bg: #00796b;
+            --subtle-bg: #b2dfdb;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background-color: var(--book-bg);
+            /* Initial color matches config */
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* State modifiers for body */
+        body.book-view {
+            height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #config-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
+            text-align: center;
+            padding: 40px 20px 80px 20px;
+            background-color: var(--book-bg);
+            box-sizing: border-box;
+        }
+
+        #config-container h1 {
+            color: var(--primary-color);
+            font-size: 2.2em;
+            margin-bottom: 0.2em;
+            margin-top: 0;
+        }
+
+        #config-container p {
+            font-size: 1.05em;
+            max-width: 700px;
+            line-height: 1.4;
+            margin-top: 0;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 900px;
+            margin: 15px 0;
+        }
+
+        .input-group {
+            text-align: left;
+        }
+
+        .input-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        #theme-input,
+        select {
+            font-family: 'Georgia', serif;
+            font-size: 1.1em;
+            padding: 10px;
+            width: 100%;
+            border: 2px solid var(--secondary-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #fff;
+            color: #333;
+        }
+
+        #generate-btn {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            grid-column: 1 / -1;
+        }
+
+        #generate-btn:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        #loader {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            background-color: var(--book-bg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 200;
+        }
+
+        .spinner {
+            border: 8px solid var(--secondary-color);
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1.5s linear infinite;
+        }
+
+        #loading-status {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: var(--primary-color);
+            max-width: 80%;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #book-wrapper {
+            width: 100%;
+            height: calc(100vh - var(--footer-height));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #book-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        nav {
+            padding: 8px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: calc(var(--page-width) * 2 + 30px);
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        nav .nav-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        nav button {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav button:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        nav button:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+
+        #page-input {
+            width: 60px;
+            padding: 7px;
+            border-radius: 3px;
+            border: 1px solid #555;
+            background-color: #fdfaf3;
+            color: #333;
+            text-align: center;
+        }
+
+        #goto-btn {
+            padding: 8px 12px;
+        }
+
+        .book {
+            width: calc(var(--page-width) * 2);
+            height: 78vh;
+            position: relative;
+            perspective: 2500px;
+        }
+
+        .page-container {
+            width: var(--page-width);
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform-origin: left center;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-in-out;
+            background-color: var(--book-bg);
+        }
+
+        .page-container.flipped {
+            transform: rotateY(-180deg);
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: var(--book-bg);
+            border: 1px solid var(--secondary-color);
+            backface-visibility: hidden;
+        }
+
+        .page.front::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+        }
+
+        .page.back::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            background: linear-gradient(to left, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+        }
+
+        .page.back {
+            transform: rotateY(180deg);
+        }
+
+        .page-content {
+            padding: 2.5em;
+            box-sizing: border-box;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            color: var(--text-color);
+            font-family: var(--book-font-family);
+        }
+
+        .page-content h1,
+        .page-content h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-top: 0;
+            font-size: 2.2em;
+        }
+
+        .page-content h1 {
+            font-size: 2.8em;
+            text-align: center;
+        }
+
+        .page-content p {
+            text-align: justify;
+            line-height: 1.7;
+        }
+
+        .cover {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .cover .image-container {
+            flex-shrink: 0;
+            align-self: stretch;
+            width: 100% !important;
+        }
+
+        .image-container {
+            margin: 1em 0;
+            position: relative;
+            width: 100%;
+            aspect-ratio: 800 / 400;
+            transition: aspect-ratio 0.3s ease-in-out;
+            isolation: isolate;
+        }
+
+        .image-container img {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            height: 100%;
+            border: 1px solid var(--secondary-color);
+            border-radius: 5px;
+            object-fit: cover;
+            transition: opacity 0.3s;
+            cursor: pointer;
+        }
+
+        .image-container figcaption {
+            text-align: center;
+            font-style: italic;
+            font-size: 0.9em;
+            color: var(--primary-color);
+            padding: 8px 5px 0 5px;
+        }
+
+        .image-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 3;
+        }
+
+        .prompt-input {
+            flex-grow: 1;
+            font-family: monospace;
+            font-size: 0.9em;
+            padding: 5px;
+            border: 1px solid var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .regenerate-btn,
+        .delete-btn {
+            font-size: 0.9em;
+            padding: 5px 10px;
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .regenerate-btn:hover,
+        .delete-btn:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        .delete-btn {
+            background-color: #c0392b;
+        }
+
+        .delete-btn:hover {
+            background-color: #a02d22;
+        }
+
+        .image-resizer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            opacity: 0.2;
+            transition: opacity 0.3s;
+            z-index: 2;
+        }
+
+        .image-resizer:hover {
+            opacity: 1;
+        }
+
+        .resize-btn {
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            line-height: 24px;
+            text-align: center;
+            padding: 0;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .resize-btn:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* BYOP Styles */
+        .api-key-container {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        #apiKeyInput {
+            font-family: 'Georgia', serif;
+            font-size: 1.1em;
+            padding: 10px;
+            flex-grow: 1;
+            border: 2px solid var(--secondary-color);
+            border-radius: 5px;
+            box-sizing: border-box;
+            background-color: #fff;
+            color: #333;
+        }
+
+        #getApiKeyBtn {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        #getApiKeyBtn:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        #apiKeyInput::placeholder {
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        footer {
+            width: 100%;
+            background-color: #222;
+            color: #ccc;
+            text-align: center;
+            padding: 8px 0;
+            font-size: 12px;
+            z-index: 300;
+            height: var(--footer-height);
+            box-sizing: border-box;
+            position: fixed;
+            bottom: 0;
+        }
+
+        #lightbox-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        #lightbox-image {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        #lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .page-content.sparse-page {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sparse-page .filler-image {
+            flex-grow: 1;
+            margin-top: 1.5em;
+            display: flex;
+            flex-direction: column;
+            min-height: 200px;
+        }
+
+        .sparse-page .filler-image img {
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @media (orientation: portrait) {
+            :root {
+                --page-width: 90vw;
+            }
+
+            nav {
+                width: var(--page-width);
+            }
+
+            #goto-group {
+                display: none;
+            }
+
+            .book {
+                width: var(--page-width);
+                perspective: none;
+                height: 78vh;
+                position: relative;
+            }
+
+            .page-container {
+                position: static;
+                transform: none !important;
+                width: 100%;
+                height: 100%;
+                display: none;
+            }
+
+            .page-container.active-portrait-container {
+                display: block;
+            }
+
+            .page {
+                position: static;
+                transform: none !important;
+                backface-visibility: visible !important;
+                display: none;
+                height: 100%;
+                border: 1px solid var(--secondary-color);
+            }
+
+            .page.active-portrait-page {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="config-container">
+        <h1 data-key="appName">Diseñador de Historietas PRO</h1>
+        <p data-key="appDescription">Crea una historieta o un cuento ilustrado. Define un tema y la IA creará un título,
+            personajes, trama, texto e ilustraciones consistentes.</p>
+        <div class="config-grid">
+            <div class="input-group full-width"><label for="theme-input" data-key="bookThemeLabel">Idea para la
+                    Historieta</label><input type="text" id="theme-input" data-key="bookThemePlaceholder"
+                    placeholder="Ej: Un fantasma amigable que le teme a la oscuridad"></div>
+            <div class="input-group full-width">
+                <label for="apiKeyInput" data-key="apiKeyLabel">Clave API de Pollinations</label>
+                <form class="api-key-container" onsubmit="event.preventDefault(); startAuthFlow();">
+                    <input type="password" id="apiKeyInput" placeholder="plln_sk_..." autocomplete="off">
+                    <button type="submit" id="getApiKeyBtn">
+                        <span data-key="getApiKeyButton">Obtener API Key</span>
+                    </button>
+                </form>
+            </div>
+            <div class="input-group"><label for="language-selector" data-key="languageLabel">Idioma</label><select
+                    id="language-selector">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select></div>
+            <div class="input-group"><label for="model-selector" data-key="modelTextLabel">Modelo de
+                    Texto</label><select id="model-selector">
+                    <option value="gemini">Gemini 2.5 Flash</option>
+                    <option value="openai-fast">GPT-5 Nano</option>
+                    <option value="grok">Grok 4 Fast</option>
+                    <option value="perplexity-fast">Perplexity Sonar</option>
+                    <option value="claude-fast">Claude 4.5 Haiku</option>
+                    <option value="kimi-k2-thinking">kimi k2</option>
+                    <option value="claude">Claude 4.5 Sonnet</option>
+                    <option value="deepseek">Deepseek V3.1</option>
+                    <option value="gemini-large">Gemini 3 Pro</option>
+                </select></div>
+            <div class="input-group"><label for="image-model-selector" data-key="modelImageLabel">Modelo de
+                    Imagen</label><select id="image-model-selector">
+                    <option value="flux" selected>Flux</option>
+                    <option value="zimage">Z Image</option>
+                    <option value="kontext">Kontext</option>
+                    <option value="nanobanana">Nano banana</option>
+                    <option value="seedream">Seedream</option>
+                    <option value="nanobanana-pro">Nano banana Pro</option>
+                    <option value="seedream-pro">Seedream Pro</option>
+                </select></div>
+            <div class="input-group"><label for="palette-selector" data-key="paletteLabel">Paleta de
+                    Colores</label><select id="palette-selector">
+                    <option value="classic" selected></option>
+                    <option value="fairy-tale"></option>
+                    <option value="noir-comic"></option>
+                    <option value="superhero"></option>
+                    <option value="cosmic-horror"></option>
+                    <option value="pastel-dream"></option>
+                    <option value="manuscript"></option>
+                    <option value="retro"></option>
+                    <option value="steampunk"></option>
+                    <option value="cyberpunk"></option>
+                    <option value="vintage"></option>
+                    <option value="jungle"></option>
+                    <option value="oceanic"></option>
+                </select></div>
+            <div class="input-group"><label for="style-selector" data-key="artStyleLabel">Estilo
+                    Artístico</label><select id="style-selector">
+                    <option>Illustration</option>
+                    <option>Anime</option>
+                    <option>Manga</option>
+                    <option>Disney Style</option>
+                    <option>Pixar Style</option>
+                    <option>Studio Ghibli Style</option>
+                    <option>Tim Burton Style</option>
+                    <option>Dr. Seuss Style</option>
+                    <option>Adventure Time Style</option>
+                    <option>Classic Cartoon</option>
+                    <option>Chibi</option>
+                    <option>Aquarelle Storybook</option>
+                    <option>3D Cartoon</option>
+                    <option>Comic Book Style</option>
+                    <option>Cinematic</option>
+                    <option>Photographic</option>
+                    <option>Oil painting</option>
+                    <option>Watercolor</option>
+                    <option>Pencil sketch</option>
+                    <option>Pop Art</option>
+                    <option>Surrealism</option>
+                    <option>Cyberpunk</option>
+                    <option>Steampunk</option>
+                    <option>Fantasy art</option>
+                    <option>Vintage</option>
+                    <option>Minimalist</option>
+                    <option>Low Poly</option>
+                    <option>Claymation</option>
+                    <option>Isometric</option>
+                </select></div>
+            <div class="input-group"><label for="font-selector" data-key="fontStyleLabel">Estilo de
+                    Fuente</label><select id="font-selector">
+                    <option value="georgia" selected>Clásica (Georgia)</option>
+                    <option value="fantasy">Fantasía (Cinzel)</option>
+                    <option value="horror">Terror (Creepster)</option>
+                    <option value="comic">Cómic (Bangers)</option>
+                    <option value="scifi">Ciencia Ficción (Orbitron)</option>
+                    <option value="sans">Amigable (Comic Neue)</option>
+                </select></div>
+            <div class="input-group"><label for="chapter-count-selector" data-key="chapterCountLabel">Número de
+                    Capítulos</label><select id="chapter-count-selector">
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                </select></div>
+            <button id="generate-btn" class="full-width" data-key="createBookButton">✨ Crear Historieta</button>
+        </div>
+    </div>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p id="loading-status"></p>
+    </div>
+
+    <div id="book-wrapper">
+        <div id="book-container">
+            <nav id="top-nav">
+                <div class="nav-group"><button id="pdf-btn" data-key="downloadPDF">Descargar PDF</button><button
+                        id="html-btn" data-key="downloadHTML">Descargar HTML</button></div>
+                <div class="nav-group" id="goto-group"><input type="number" id="page-input"
+                        data-key="pageInputPlaceholder" placeholder="Pág." min="1"><button id="goto-btn"
+                        data-key="gotoButton">Ir</button></div>
+                <div class="nav-group"><button id="prev-btn-top">&#9664;</button><span
+                        id="page-number-top"></span><button id="next-btn-top">&#9654;</button></div>
+                <button class="creator-btn" id="start-over-btn" data-key="createAnotherButton">✏️ Crear Otra</button>
+            </nav>
+            <div class="book" id="book-element"></div>
+            <nav id="bottom-nav">
+                <div style="flex:1;"></div>
+                <div class="nav-group" style="flex:1; justify-content:center;"><button id="prev-btn-bottom"
+                        data-key="prevButton">Anterior</button><span id="page-number-bottom"></span><button
+                        id="next-btn-bottom" data-key="nextButton">Siguiente</button></div>
+                <div style="flex:1;"></div>
+            </nav>
+        </div>
+    </div>
+
+    <footer data-key="designerCredit">Diseñado por Juan Guillermo Rivera Berrío con tecnología Gemini 2.5 Pro y las API
+        de Pollinations</footer>
+
+    <div id="lightbox-overlay">
+        <span id="lightbox-close">&times;</span>
+        <img id="lightbox-image" src="" alt="Vista ampliada">
+    </div>
+
+    <script>
+        // --- Selectores y Estado Global ---
+        const configContainer = document.getElementById('config-container'), loader = document.getElementById('loader'), bookContainer = document.getElementById('book-container'), generateBtn = document.getElementById('generate-btn'), themeInput = document.getElementById('theme-input'), modelSelector = document.getElementById('model-selector'), styleSelector = document.getElementById('style-selector'), languageSelector = document.getElementById('language-selector'), imageModelSelector = document.getElementById('image-model-selector'), paletteSelector = document.getElementById('palette-selector'), fontSelector = document.getElementById('font-selector'), chapterCountSelector = document.getElementById('chapter-count-selector'), bookElement = document.getElementById('book-element'), loadingStatus = document.getElementById('loading-status'), pageInput = document.getElementById('page-input'), pageNavControls = { topNum: document.getElementById('page-number-top'), bottomNum: document.getElementById('page-number-bottom'), topPrev: document.getElementById('prev-btn-top'), bottomPrev: document.getElementById('prev-btn-bottom'), topNext: document.getElementById('next-btn-top'), bottomNext: document.getElementById('next-btn-bottom') };
+        const lightboxOverlay = document.getElementById('lightbox-overlay'), lightboxImage = document.getElementById('lightbox-image'), lightboxClose = document.getElementById('lightbox-close');
+
+        let pages = [], totalPages = 0, currentPageIndex = 0;
+        let singlePageElements = [], totalSinglePages = 0, currentSinglePageIndex = 0;
+        let lastLandscapeIndex = 0, lastPortraitIndex = 0;
+
+        // --- Traducciones ---
+        const translations = {
+            es: { appName: "Diseñador de Historietas PRO", appDescription: "Crea una historieta o un cuento ilustrado. Define un tema y la IA creará un título, personajes, trama, texto e ilustraciones consistentes.", bookThemeLabel: "Idea para la Historieta", bookThemePlaceholder: "Ej: Un fantasma amigable que le teme a la oscuridad", apiKeyLabel: "Clave API de Pollinations", getApiKeyButton: "Obtener API Key", languageLabel: "Idioma", modelTextLabel: "Modelo de Texto", modelImageLabel: "Modelo de Imagen", paletteLabel: "Paleta de Colores", artStyleLabel: "Estilo Artístico", fontStyleLabel: "Estilo de Fuente", chapterCountLabel: "Número de Capítulos", createBookButton: "✨ Crear Historieta", loadingInitial: "Forjando ideas...", step1: "Paso 1: Creando personajes y trama...", step2: "Paso 2: Generando un título creativo...", step3: "Paso 3: Diseñando la estructura de capítulos...", step4: "Paso 4: Escribiendo la historia completa...", step5: "Paso 5: Maquetando el libro...", errorMsg: (m) => `Error: ${m}. Inténtalo de nuevo.`, themeRequired: "Por favor, introduce una idea para la historieta o comprueba tu clave API.", downloadPDF: "Descargar PDF", downloadHTML: "Descargar HTML", pageInputPlaceholder: "Pág.", gotoButton: "Ir", prevButton: "Anterior", nextButton: "Siguiente", createAnotherButton: "✏️ Crear Otra", invalidPageNum: "Número de página inválido.", regenerateButton: "Regenerar", deleteButton: "Eliminar", coverSubtitle: "Una aventura ilustrada", backCoverText: "Historieta generada dinámicamente.", endText: "FIN", pdfError: "Error al generar el PDF.", pdfProcessingPage: (c, t) => `Procesando página ${c}/${t}...`, designerCredit: "Diseñado por Juan Guillermo Rivera Berrío con tecnología Gemini 2.5 Pro y las API de Pollinations", paletteOptions: ["Clásico", "Cuento de Hadas", "Cómic Noir", "Superhéroe", "Horror Cósmico", "Sueño Pastel", "Manuscrito", "Retro", "Steampunk", "Cyberpunk", "Vintage", "Jungla", "Oceánico"] },
+            en: { appName: "Comic Designer PRO", appDescription: "Create a comic or an illustrated story. Define a theme, and the AI will create a title, consistent characters, plot, text, and illustrations.", bookThemeLabel: "Idea for the Comic", bookThemePlaceholder: "Ex: A friendly ghost who is afraid of the dark", apiKeyLabel: "Pollinations API Key", getApiKeyButton: "Get API Key", languageLabel: "Language", modelTextLabel: "Text Model", modelImageLabel: "Image Model", paletteLabel: "Color Palette", artStyleLabel: "Artistic Style", fontStyleLabel: "Font Style", chapterCountLabel: "Number of Chapters", createBookButton: "✨ Create Comic", loadingInitial: "Forging ideas...", step1: "Step 1: Creating characters and plot...", step2: "Step 2: Generating a creative title...", step3: "Step 3: Designing chapter structure...", step4: "Step 4: Writing the complete story...", step5: "Step 5: Laying out the book...", errorMsg: (m) => `Error: ${m}. Please try again.`, themeRequired: "Please enter an idea for the comic or check your API key.", downloadPDF: "Download PDF", downloadHTML: "Download HTML", pageInputPlaceholder: "Page", gotoButton: "Go", prevButton: "Previous", nextButton: "Next", createAnotherButton: "✏️ Create Another", invalidPageNum: "Invalid page number.", regenerateButton: "Regenerate", deleteButton: "Delete", coverSubtitle: "An illustrated adventure", backCoverText: "Dynamically generated comic.", endText: "THE END", pdfError: "Error generating PDF.", pdfProcessingPage: (c, t) => `Processing page ${c}/${t}...`, designerCredit: "Designed by Juan Guillermo Rivera Berrío with Gemini 2.5 Pro and Pollinations APIs", paletteOptions: ["Classic", "Fairy Tale", "Noir Comic", "Superhero", "Cosmic Horror", "Pastel Dream", "Manuscript", "Retro", "Steampunk", "Cyberpunk", "Vintage", "Jungle", "Oceanic"] },
+        };
+
+        const prompts = {
+            'es': { langInstruction: 'Responde SOLAMENTE EN ESPAÑOL. IGNORA cualquier otra instrucción de idioma.', story_setup: (t) => `Basado en la idea "${t}", crea una historieta. Define 2-4 personajes principales y un breve resumen de la trama en 3 actos. Formato: JSON con claves "characters" (array de objetos con "name" y "description" en inglés para la IA de imágenes) y "plot_summary" (en español). Solo el JSON.`, creative_title: (t) => `Basado en la idea para una historia: "${t}", genera un título de libro corto, creativo e impactante. Responde solo con el título, sin comillas.`, chapters: (plot, count) => `Basado en el resumen de la trama: "${plot}", crea ${count} títulos de capítulos que sigan la historia. Formato: array JSON. Solo el JSON.`, full_story: (plot, chars, titles) => `ROL: Eres un maestro narrador. TAREA: Escribe la narrativa completa para una historia de principio a fin. Usa la siguiente información: TRAMA GENERAL: "${plot}". PERSONAJES: "${chars}". TÍTULOS DE CAPÍTULOS: [${titles.map(t => `"${t}"`).join(', ')}]. INSTRUCCIONES: 1. Escribe la historia completa, usando cada título de capítulo como un encabezado para su sección correspondiente. Asegúrate de que cada capítulo tenga contenido narrativo sustancial. 2. Asegura un flujo lógico y cronológico de los eventos, manteniendo la continuidad entre capítulos. Los personajes deben recordar eventos pasados. 3. Inserta al menos dos sugerencias de imagen por capítulo usando el formato [IMAGE: descripción en inglés para IA | pie de foto en español]. 4. En la descripción para la IA, USA LAS DESCRIPCIÓNES DE PERSONAJES PROVISTAS para mantener la consistencia visual. 5. El pie de foto debe ser una frase muy corta y descriptiva (máximo 10 palabras). 6. COMIENZA DIRECTAMENTE con la narrativa del primer capítulo. NO incluyas introducciones como "Claro, aquí tienes la historia..." ni ningún otro texto conversacional.`, coverImage: (t, chars) => `Respond IN ENGLISH ONLY. Generate a style-neutral image prompt for an epic cover of a story titled "${t}". The main characters are: ${chars}. The prompt should describe them in a dynamic scene, but without specifying an artistic style (e.g., instead of "a photorealistic cat", just say "a cat").` },
+            'en': { langInstruction: 'Respond ONLY IN ENGLISH. IGNORE any other language instruction.', story_setup: (t) => `Based on the idea "${t}", create a story. Define 2-4 main characters and a brief 3-act plot summary. Format: JSON with keys "characters" (array of objects with "name" and "description" in English for the image AI) and "plot_summary" (in English). Only the JSON.`, creative_title: (t) => `Based on the story idea: "${t}", generate a short, creative, and impactful book title. Respond with only the title, without quotes.`, chapters: (plot, count) => `Based on the plot summary: "${plot}", create ${count} chapter titles that follow the story. Format: JSON array. Only the JSON.`, full_story: (plot, chars, titles) => `ROLE: You are a master storyteller. TASK: Write the complete narrative for a story from beginning to end. Use the following information: OVERALL PLOT: "${plot}". CHARACTERS: "${chars}". CHAPTER TITLES: [${titles.map(t => `"${t}"`).join(', ')}]. INSTRUCTIONS: 1. Write the complete story, using each chapter title as a heading for its corresponding section. Ensure each chapter has substantial narrative content. 2. Ensure a logical and chronological flow of events, maintaining continuity between chapters. Characters must remember past events. 3. Insert at least two image suggestions per chapter using the format [IMAGE: English description for AI | English caption]. 4. In the AI description, USE THE PROVIDED CHARACTER DESCRIPTIONS for visual consistency. 5. The caption must be a very short, descriptive sentence (max 10 words). 6. BEGIN DIRECTLY with the narrative of the first chapter. DO NOT include introductory phrases like 'Sure, here is the story...' or any other conversational text.`, coverImage: (t, chars) => `Generate a style-neutral image prompt for an epic cover of a story titled "${t}". The main characters are: ${chars}. The prompt should describe them in a dynamic scene, but without specifying an artistic style (e.g., instead of "a photorealistic cat", just say "a cat").` },
+        };
+
+        function applyTheme() { document.documentElement.dataset.theme = paletteSelector.value; }
+        function applyFont() { document.documentElement.dataset.font = fontSelector.value; }
+        function applyLanguage() { const currentLang = languageSelector.value; document.documentElement.lang = currentLang; const currentTranslations = translations[currentLang] || translations.es; document.querySelectorAll('[data-key]').forEach(el => { const key = el.dataset.key; if (currentTranslations[key]) { if (el.tagName === 'INPUT' && (el.type === 'text' || el.type === 'number')) { el.placeholder = currentTranslations[key]; } else { el.textContent = currentTranslations[key]; } } }); const updateSelectOptions = (selectorId, optionsArray) => { const select = document.getElementById(selectorId); if (select && optionsArray) { optionsArray.forEach((text, index) => { if (select.options[index]) { select.options[index].textContent = text; } }); } }; updateSelectOptions('palette-selector', currentTranslations.paletteOptions); loadingStatus.textContent = currentTranslations.loadingInitial; document.title = currentTranslations.appName; }
+        paletteSelector.addEventListener('change', applyTheme);
+        fontSelector.addEventListener('change', applyFont);
+        languageSelector.addEventListener('change', applyLanguage);
+        function setupNavEvents() { [pageNavControls.topPrev, pageNavControls.bottomPrev].forEach(b => b.addEventListener('click', prevPage));[pageNavControls.topNext, pageNavControls.bottomNext].forEach(b => b.addEventListener('click', nextPage)); document.getElementById('pdf-btn').addEventListener('click', downloadPDF); document.getElementById('html-btn').addEventListener('click', downloadHTML); document.getElementById('start-over-btn').addEventListener('click', startOver); document.getElementById('goto-btn').addEventListener('click', goToPage); pageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') goToPage(); }); document.addEventListener('keydown', (e) => { if (bookContainer.style.display === 'flex') { if (e.key === 'ArrowRight') nextPage(); else if (e.key === 'ArrowLeft') prevPage(); } }); window.addEventListener('resize', setupViewMode); }
+        setupNavEvents();
+        generateBtn.addEventListener('click', generateBook);
+        themeInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') generateBtn.click(); });
+        bookElement.addEventListener('click', function (event) { const target = event.target; if (target.classList.contains('resize-btn')) { resizeImage(target); } else if (target.classList.contains('regenerate-btn')) { regenerateImage(target); } else if (target.classList.contains('delete-btn')) { deleteImage(target); } });
+        document.getElementById('getApiKeyBtn').addEventListener('click', startAuthFlow);
+
+        function startAuthFlow() {
+            const redirectUrl = window.location.href.split('#')[0];
+            window.location.href = `https://enter.pollinations.ai/authorize?redirect_url=${encodeURIComponent(redirectUrl)}`;
+        }
+
+        function getApiKey() {
+            return document.getElementById('apiKeyInput').value.trim() || localStorage.getItem('pollinations_api_key') || '';
+        }
+
+        function openLightbox(src) { lightboxImage.src = src; lightboxOverlay.style.display = 'flex'; }
+        function closeLightbox() { lightboxOverlay.style.display = 'none'; lightboxImage.src = ''; }
+        document.body.addEventListener('click', function (e) { if (e.target.tagName === 'IMG' && e.target.closest('.page-content')) { openLightbox(e.target.src); } });
+        lightboxOverlay.addEventListener('click', closeLightbox);
+        lightboxClose.addEventListener('click', closeLightbox);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLanguage();
+
+            // Carga la clave desde localStorage si existe
+            const savedKey = localStorage.getItem('pollinations_api_key');
+            if (savedKey) document.getElementById('apiKeyInput').value = savedKey;
+
+            // Captura la clave desde el hash de la URL si el usuario regresa de Pollinations
+            const hashParams = new URLSearchParams(window.location.hash.slice(1));
+            const apiKeyFromUrl = hashParams.get('api_key');
+            if (apiKeyFromUrl) {
+                document.getElementById('apiKeyInput').value = apiKeyFromUrl;
+                localStorage.setItem('pollinations_api_key', apiKeyFromUrl);
+                window.history.replaceState(null, null, window.location.pathname + window.location.search);
+            }
+        });
+
+        // --- NUEVA FUNCIÓN PARA SEMILLA SEGURA (100-5000) ---
+        function generateRandomSeed() {
+            return Math.floor(Math.random() * 4901) + 100; // Genera entre 100 y 5000
+        }
+
+        async function imageToBase64(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const blob = await response.blob();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                console.error("Error converting image to Base64:", e, url);
+                return url; // Fallback to original URL
+            }
+        }
+
+        function cleanPromptResponse(text) {
+            if (!text) return "";
+            // Eliminar ruido conversacional común de LLMs
+            let cleaned = text.trim();
+            // Eliminar prefijos como "Prompt:", "**Prompt:**", "Here is the prompt:", etc.
+            cleaned = cleaned.replace(/^(image)?\s*prompt\s*[:*-]+\s*/i, '');
+            cleaned = cleaned.replace(/^here is (the|a)\s*(image)?\s*prompt\s*[:*-]+\s*/i, '');
+            // Eliminar bloques de código markdown si los hay
+            cleaned = cleaned.replace(/```(markdown|text)?/g, '').replace(/```/g, '');
+            // Eliminar asteriscos dobles (negritas) que a veces envuelven el prompt
+            cleaned = cleaned.replace(/^\*\*|\*\*$/g, '');
+            return cleaned.trim();
+        }
+
+        // --- NUEVA FUNCIÓN PARA MANEJAR ERRORES DE IMAGEN Y REINTENTAR ---
+        function handleImageError(img) {
+            let attempts = parseInt(img.dataset.retryCount || '0');
+            if (attempts >= 5) {
+                console.warn("Max retries reached for image:", img.src);
+                return; // Detener después de 5 intentos
+            }
+
+            attempts++;
+            img.dataset.retryCount = attempts;
+            const seed = generateRandomSeed();
+
+            // Reconstruir la URL con una nueva semilla y los datos guardados
+            const prompt = img.dataset.prompt;
+            const style = img.dataset.style;
+            const model = img.dataset.model;
+
+            // Pequeño retardo para no saturar si falla inmediatamente
+            setTimeout(() => {
+                const apiKey = getApiKey();
+                const newUrl = `https://enter.pollinations.ai/api/generate/image/${encodeURIComponent(prompt + ", " + style)}?key=${apiKey}&width=800&height=400&seed=${seed}&model=${model}`;
+                img.src = newUrl;
+            }, 500);
+        }
+
+        async function generateBook() {
+            const theme = themeInput.value.trim(), textModel = modelSelector.value, lang = languageSelector.value, numChapters = chapterCountSelector.value; const currentTranslations = translations[lang] || translations.es;
+            if (!theme) { alert(currentTranslations.themeRequired); return; }
+
+            // Reset image loading queue for new generation
+            imageLoadQueue = [];
+
+            applyTheme(); applyFont();
+            configContainer.style.display = 'none';
+            document.body.classList.add('book-view');
+            loader.style.display = 'flex';
+            bookElement.innerHTML = '';
+            try {
+                let allPageContents = [];
+                const langPrompts = prompts[lang] || prompts.es;
+
+                loadingStatus.textContent = currentTranslations.step1;
+                const storySetupResponse = await fetchApi(`${langPrompts.langInstruction} ${langPrompts.story_setup(theme)}`, textModel);
+                // Extracción robusta de JSON
+                const jsonStart = storySetupResponse.indexOf('{');
+                const jsonEnd = storySetupResponse.lastIndexOf('}') + 1;
+                if (jsonStart === -1) throw new Error("Invalid character/plot response");
+                const storyData = JSON.parse(storySetupResponse.substring(jsonStart, jsonEnd));
+                const characterDescriptionsString = storyData.characters.map(c => `${c.name}: ${c.description}`).join('; ');
+
+                loadingStatus.textContent = currentTranslations.step2;
+                const creativeTitle = await fetchApi(`${langPrompts.langInstruction} ${langPrompts.creative_title(theme)}`, textModel);
+
+                const coverContentHTML = await createCoverContent(creativeTitle.trim(), textModel, lang, characterDescriptionsString);
+                allPageContents.push(coverContentHTML);
+
+                loadingStatus.textContent = currentTranslations.step3;
+                const chaptersResponse = await fetchApi(`${langPrompts.langInstruction} ${langPrompts.chapters(storyData.plot_summary, numChapters)}`, textModel);
+                const listStart = chaptersResponse.indexOf('[');
+                const listEnd = chaptersResponse.lastIndexOf(']') + 1;
+                if (listStart === -1) throw new Error("Invalid chapters response");
+                const chapterTitles = JSON.parse(chaptersResponse.substring(listStart, listEnd));
+
+                loadingStatus.textContent = currentTranslations.step4;
+                const fullStoryText = await fetchApi(`${langPrompts.langInstruction} ${langPrompts.full_story(storyData.plot_summary, characterDescriptionsString, chapterTitles)}`, textModel);
+                const chaptersContent = parseFullStory(fullStoryText, chapterTitles);
+
+                loadingStatus.textContent = currentTranslations.step5;
+                for (let i = 0; i < chapterTitles.length; i++) {
+                    const chapterText = chaptersContent[i] || "";
+                    const chapterPages = await paginateChapter(chapterTitles[i], chapterText);
+                    allPageContents.push(...chapterPages);
+                }
+
+                allPageContents = allPageContents.filter(content => content && content.replace(/<[^>]*>/g, '').trim() !== '');
+                buildBookFromContents(allPageContents);
+                setupViewMode();
+                processImageQueue(); // Process the image queue after the DOM is built
+                loader.style.display = 'none'; bookContainer.style.display = 'flex';
+            } catch (error) { console.error('Error:', error); loadingStatus.textContent = currentTranslations.errorMsg(error.message); setTimeout(() => { loader.style.display = 'none'; configContainer.style.display = 'flex'; }, 5000); }
+        }
+
+        // Global queue for staggered image loading
+        let imageLoadQueue = [];
+
+        function createImageContainerHTML(englishPrompt, captionText, style, altText, imageModel, extraClass = '', showCaption = true) {
+            const lang = languageSelector.value;
+            const currentTranslations = translations[lang] || translations.es;
+            const prefixRegex = /^(caption|pie de foto|légende|chú thích)\s*:\s*/i;
+            const cleanedCaptionText = (captionText || englishPrompt).replace(prefixRegex, '');
+            const captionHTML = showCaption ? `<figcaption>${cleanedCaptionText}</figcaption>` : '';
+            const seed = generateRandomSeed();
+            const apiKey = getApiKey();
+            const imageUrl = `https://enter.pollinations.ai/api/generate/image/${encodeURIComponent(englishPrompt + ", " + style)}?key=${apiKey}&width=800&height=400&seed=${seed}&model=${imageModel}`;
+
+            // Crear ID único para esta imagen
+            const placeholderId = `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+            // Agregar a la cola de carga
+            imageLoadQueue.push({
+                id: placeholderId,
+                url: imageUrl,
+                prompt: englishPrompt,
+                style: style,
+                model: imageModel
+            });
+
+            return `<figure class="image-container ${extraClass}">
+                    <img id="${placeholderId}" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='400'%3E%3Crect width='800' height='400' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='20' fill='%23999'%3ECargando...%3C/text%3E%3C/svg%3E" alt="${altText}">
+                    ${captionHTML}
+                    <div class="image-resizer"><button class="resize-btn" data-direction="increase">▲</button><button class="resize-btn" data-direction="decrease">▼</button></div>
+                    <div class="image-controls">
+                        <input type="text" class="prompt-input" value="${englishPrompt}">
+                        <button class="regenerate-btn" data-style="${style}" data-image-model="${imageModel}">${currentTranslations.regenerateButton}</button>
+                        <button class="delete-btn">${currentTranslations.deleteButton}</button>
+                    </div>
+                </figure>`;
+        }
+
+        function processImageQueue() {
+            let delay = 0;
+            imageLoadQueue.forEach((imageData, index) => {
+                setTimeout(() => {
+                    const imgElement = document.getElementById(imageData.id);
+                    if (imgElement) {
+                        imgElement.src = imageData.url;
+                        imgElement.setAttribute('data-prompt', imageData.prompt.replace(/"/g, '&quot;'));
+                        imgElement.setAttribute('data-style', imageData.style);
+                        imgElement.setAttribute('data-model', imageData.model);
+                        imgElement.setAttribute('data-retry-count', '0');
+                        imgElement.setAttribute('onerror', 'handleImageError(this)');
+                    }
+                }, delay);
+                delay += 1500; // 1.5 segundos entre cada imagen
+            });
+            // Limpiar la cola después de procesarla
+            imageLoadQueue = [];
+        }
+
+        async function createCoverContent(title, textModel, lang, characterDescriptionsString) {
+            const langPrompts = prompts[lang] || prompts.es;
+            const prompt = await fetchApi(langPrompts.coverImage(title, characterDescriptionsString), textModel);
+            const style = styleSelector.value;
+            const imageModel = imageModelSelector.value;
+            const englishPrompt = cleanPromptResponse(prompt.trim());
+            const imgHTML = createImageContainerHTML(englishPrompt, "Cover Image", style, "Portada", imageModel, '', false);
+            return `<div class="page-content cover"><h1>${title}</h1>${imgHTML}<p>${(translations[lang] || translations.es).coverSubtitle}</p></div>`;
+        }
+
+        async function paginateChapter(title, content) {
+            const cleanedContent = content.replace(/(imagen sugerida|suggested image|image suggestion|sugerencia de imagen):?\s*/gi, '');
+            const chapterPages = [];
+            const elements = parseContentToHTML(cleanedContent);
+            if (elements.length === 0 || cleanedContent.trim() === '') return [];
+            let pageHTML = `<h2>${title}</h2>`;
+            for (const elementHTML of elements) {
+                const tempHTML = pageHTML + elementHTML;
+                if (await isContentOverflowing(tempHTML)) {
+                    if (pageHTML.replace(/<[^>]*>/g, '').trim().toLowerCase() !== title.trim().toLowerCase()) {
+                        chapterPages.push(`<div class="page-content">${pageHTML}</div>`);
+                    }
+                    pageHTML = elementHTML;
+                } else { pageHTML = tempHTML; }
+            }
+            if (pageHTML.replace(/<[^>]*>/g, '').trim() !== '') { chapterPages.push(`<div class="page-content">${pageHTML}</div>`); }
+            return chapterPages;
+        }
+
+        function buildBookFromContents(allPageContents) {
+            const lang = languageSelector.value;
+            const currentTranslations = translations[lang] || translations.es;
+            bookElement.innerHTML = '';
+            let finalContents = [...allPageContents];
+            finalContents.push(`<div class="page-content cover"><h2>${currentTranslations.endText}</h2><p>${currentTranslations.backCoverText}</p></div>`);
+            if (finalContents.length % 2 !== 0) { finalContents.push('<div class="page-content"></div>'); }
+            for (let i = 0; i < finalContents.length; i += 2) {
+                const pageContainer = document.createElement('div');
+                pageContainer.className = 'page-container';
+                const frontContent = finalContents[i];
+                const backContent = (i + 1 < finalContents.length) ? finalContents[i + 1] : '';
+                pageContainer.innerHTML = `<div class="page back">${backContent}</div><div class="page front">${frontContent}</div>`;
+                if (i === 0) { pageContainer.querySelector('.back').innerHTML = ''; }
+                bookElement.appendChild(pageContainer);
+            }
+        }
+
+        async function fetchApi(prompt, model) {
+            const apiKey = getApiKey();
+            const r = await fetch(`https://enter.pollinations.ai/api/generate/text/${encodeURIComponent(prompt)}?key=${apiKey}&model=${model}`);
+            if (!r.ok) throw new Error(`IA falló (status ${r.status})`);
+            return await r.text();
+        }
+
+        function parseContentToHTML(content) {
+            const style = styleSelector.value;
+            const imageModel = imageModelSelector.value;
+            const elements = [];
+            const regex = /(\[IMAGE:.+?\])/g;
+            content.split(regex).filter(p => p.trim() !== '').forEach(part => {
+                if (part.startsWith('[IMAGE:')) {
+                    const innerContent = part.slice(8, -1).trim();
+                    const parts = innerContent.split('|');
+                    const englishPrompt = parts[0].trim();
+                    const captionText = (parts.length > 1 ? parts[1].trim() : englishPrompt);
+                    elements.push(createImageContainerHTML(englishPrompt, captionText, style, englishPrompt, imageModel));
+                } else { part.split('\n').filter(p => p.trim() !== '').forEach(p => elements.push(`<p>${p}</p>`)); }
+            });
+            return elements;
+        }
+
+        function parseFullStory(fullStoryText, chapterTitles) {
+            const chaptersContent = [];
+            let remainingText = fullStoryText;
+            for (let i = 0; i < chapterTitles.length; i++) {
+                const titleRegex = new RegExp(`^\\s*${chapterTitles[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*`, 'i');
+                remainingText = remainingText.replace(titleRegex, '').trim();
+                let endIndex;
+                if (i + 1 < chapterTitles.length) {
+                    const nextTitleRegex = new RegExp(`^\\s*${chapterTitles[i + 1].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')}\\s*`, 'im');
+                    const match = remainingText.match(nextTitleRegex);
+                    endIndex = match ? match.index : -1;
+                } else { endIndex = remainingText.length; }
+                if (endIndex === -1 || endIndex === 0) endIndex = remainingText.length;
+                const chapterText = remainingText.substring(0, endIndex).trim();
+                chaptersContent.push(chapterText);
+                remainingText = remainingText.substring(endIndex);
+            }
+            return chaptersContent;
+        }
+
+        function isContentOverflowing(html) { return new Promise(resolve => { const t = document.createElement('div'); t.style.cssText = `position: absolute; visibility: hidden; width: var(--page-width); height: 78vh;`; t.innerHTML = `<div class="page-content">${html}</div>`; document.body.appendChild(t); requestAnimationFrame(() => { resolve(t.querySelector('.page-content').scrollHeight > t.querySelector('.page-content').clientHeight); document.body.removeChild(t); }); }); }
+
+        function isPortrait() { return window.matchMedia("(orientation: portrait)").matches; }
+
+        function setupViewMode() {
+            if (isPortrait()) {
+                singlePageElements = [];
+                const containers = bookElement.querySelectorAll('.page-container');
+                containers.forEach(container => {
+                    const front = container.querySelector('.front'), back = container.querySelector('.back');
+                    const frontContent = front ? front.querySelector('.page-content') : null;
+                    if (frontContent && frontContent.innerHTML.trim()) singlePageElements.push(front);
+                    const backContent = back ? back.querySelector('.page-content') : null;
+                    if (backContent && backContent.innerHTML.trim()) singlePageElements.push(back);
+                });
+                totalSinglePages = singlePageElements.length;
+                if (pageInput) pageInput.max = totalSinglePages;
+                const targetSingleIndex = (lastLandscapeIndex === 0) ? 0 : Math.min((lastLandscapeIndex * 2), totalSinglePages - 1);
+                showSinglePage(targetSingleIndex);
+            } else {
+                pages = bookElement.querySelectorAll('.page-container');
+                totalPages = pages.length;
+                pages.forEach((page, index) => {
+                    page.classList.remove('active-portrait-container');
+                    page.querySelector('.front')?.classList.remove('active-portrait-page');
+                    page.querySelector('.back')?.classList.remove('active-portrait-page');
+                });
+                if (pageInput) pageInput.max = (totalPages * 2) - 2;
+                const targetLandscapeIndex = Math.floor(lastPortraitIndex / 2);
+                for (let i = 0; i < pages.length; i++) {
+                    if (i < targetLandscapeIndex) { pages[i].classList.add('flipped'); }
+                    else { pages[i].classList.remove('flipped'); }
+                }
+                pages.forEach((page, index) => {
+                    page.style.zIndex = page.classList.contains('flipped') ? index : totalPages - index;
+                });
+                currentPageIndex = targetLandscapeIndex;
+                updateNav();
+            }
+        }
+
+        function showSinglePage(index) {
+            if (index < 0 || index >= totalSinglePages) return;
+            currentSinglePageIndex = index;
+            bookElement.querySelectorAll('.page-container').forEach(c => c.classList.remove('active-portrait-container'));
+            bookElement.querySelectorAll('.page').forEach(p => p.classList.remove('active-portrait-page'));
+            const activePage = singlePageElements[index];
+            if (activePage) { activePage.classList.add('active-portrait-page'); activePage.parentElement.classList.add('active-portrait-container'); }
+            updateNav();
+        }
+
+        function updateNav() {
+            if (isPortrait()) {
+                let pageText = '';
+                if (currentSinglePageIndex === 0) { pageText = 'Portada'; }
+                else if (currentSinglePageIndex === totalSinglePages - 1) { pageText = 'Contraportada'; }
+                else { pageText = `Pág ${currentSinglePageIndex}`; }
+                [pageNavControls.topNum, pageNavControls.bottomNum].forEach(el => el.textContent = pageText);
+                [pageNavControls.topPrev, pageNavControls.bottomPrev].forEach(b => b.disabled = currentSinglePageIndex === 0);
+                [pageNavControls.topNext, pageNavControls.bottomNext].forEach(b => b.disabled = currentSinglePageIndex >= totalSinglePages - 1);
+                lastPortraitIndex = currentSinglePageIndex;
+            } else {
+                let l, r;
+                const totalPageCount = (totalPages * 2) - 2;
+                if (currentPageIndex === 0) { l = ''; r = 'Portada'; }
+                else if (currentPageIndex >= totalPages) { l = totalPageCount; r = 'Contraportada'; }
+                else { l = (currentPageIndex) * 2 - 1; r = l + 1; }
+                const pageText = (l && r) ? `Págs ${l}-${r}` : `${r || l}`;
+                [pageNavControls.topNum, pageNavControls.bottomNum].forEach(el => el.textContent = pageText);
+                [pageNavControls.topPrev, pageNavControls.bottomPrev].forEach(b => b.disabled = currentPageIndex === 0);
+                [pageNavControls.topNext, pageNavControls.bottomNext].forEach(b => b.disabled = currentPageIndex >= totalPages);
+                lastLandscapeIndex = currentPageIndex;
+            }
+        }
+
+        function nextPage() {
+            if (isPortrait()) { if (currentSinglePageIndex < totalSinglePages - 1) showSinglePage(currentSinglePageIndex + 1); }
+            else { if (currentPageIndex < totalPages) { pages[currentPageIndex].classList.add('flipped'); pages[currentPageIndex].style.zIndex = 100 + currentPageIndex; currentPageIndex++; updateNav(); } }
+        }
+
+        function prevPage() {
+            if (isPortrait()) {
+                if (currentSinglePageIndex > 0) showSinglePage(currentSinglePageIndex - 1);
+            } else {
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    const pageToFlip = pages[currentPageIndex];
+                    pageToFlip.style.zIndex = 100 + (totalPages - currentPageIndex);
+                    pageToFlip.classList.remove('flipped');
+                    setTimeout(() => {
+                        pageToFlip.style.zIndex = totalPages - currentPageIndex;
+                    }, 1000);
+                    updateNav();
+                }
+            }
+        }
+
+        function goToPage() {
+            const pageNum = parseInt(pageInput.value);
+            const lang = languageSelector.value;
+            const currentTranslations = translations[lang] || translations.es;
+            if (isPortrait()) {
+                if (!isNaN(pageNum) && pageNum >= 0 && pageNum < totalSinglePages) { showSinglePage(pageNum); }
+                else { alert(currentTranslations.invalidPageNum); }
+            } else {
+                if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= (totalPages * 2) - 2) {
+                    const targetIndex = Math.ceil((pageNum + 1) / 2);
+                    for (let i = 0; i < totalPages; i++) {
+                        if (pages[i]) {
+                            if (i < targetIndex) { pages[i].classList.add('flipped'); }
+                            else { pages[i].classList.remove('flipped'); }
+                        }
+                    }
+                    currentPageIndex = targetIndex;
+                    pages.forEach((page, index) => {
+                        page.style.zIndex = page.classList.contains('flipped') ? index : totalPages - index;
+                    });
+                    updateNav();
+                } else { alert(currentTranslations.invalidPageNum); pageInput.value = ''; }
+            }
+        }
+
+        function startOver() { location.reload(); }
+
+        function regenerateImage(btn) {
+            const c = btn.closest('.image-container'), img = c.querySelector('img'), p = c.querySelector('.prompt-input').value, s = btn.dataset.style, m = btn.dataset.imageModel;
+            const seed = generateRandomSeed(); // Usar semilla segura
+            img.style.opacity = '0.5';
+            // Reset retry count on manual regeneration
+            img.dataset.retryCount = '0';
+            // Update attributes for the error handler
+            img.dataset.prompt = p;
+            img.dataset.style = s;
+            img.dataset.model = m;
+
+            const apiKey = getApiKey();
+            const newUrl = `https://enter.pollinations.ai/api/generate/image/${encodeURIComponent(p + ", " + s)}?key=${apiKey}&width=800&height=400&seed=${seed}&model=${m}`;
+            img.src = newUrl;
+            img.onload = () => img.style.opacity = '1';
+            img.onerror = () => { handleImageError(img); }; // Usar el handler de error
+        }
+
+        function deleteImage(btn) { btn.closest('.image-container').remove(); }
+        function resizeImage(btn) {
+            const increase = btn.dataset.direction === 'increase';
+            const container = btn.closest('.image-container');
+            const currentRatio = (container.style.aspectRatio || '800 / 400').split(' / ');
+            const currentHeight = parseFloat(currentRatio[1]);
+            const change = increase ? -20 : 20;
+            let newHeight = currentHeight + change;
+            if (newHeight < 200) newHeight = 200;
+            if (newHeight > 600) newHeight = 600;
+            container.style.aspectRatio = `800 / ${newHeight}`;
+
+            const isCover = container.closest('.cover') !== null;
+            if (isCover) {
+                const containerWidth = container.offsetWidth;
+                const calculatedHeight = (containerWidth * newHeight) / 800;
+                container.style.height = `${calculatedHeight}px`;
+                container.style.minHeight = `${calculatedHeight}px`;
+                container.style.maxHeight = `${calculatedHeight}px`;
+            }
+        }
+
+        async function downloadPDF() {
+            loader.style.display = 'flex';
+            const lang = languageSelector.value;
+            const currentTranslations = translations[lang] || translations.es;
+            
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+                
+                // Seleccionamos las páginas que tienen contenido
+                const allPageDivs = Array.from(bookElement.querySelectorAll('.page-content'))
+                    .filter(pc => pc.innerHTML.trim() !== '')
+                    .map(pc => pc.parentElement);
+
+                for (let i = 0; i < allPageDivs.length; i++) {
+                    loadingStatus.textContent = currentTranslations.pdfProcessingPage(i + 1, allPageDivs.length);
+                    const originalPage = allPageDivs[i];
+                    
+                    // 1. Esperar carga de imágenes
+                    const images = Array.from(originalPage.querySelectorAll('img'));
+                    await Promise.all(images.map(img => new Promise(resolve => {
+                        if (img.complete && img.naturalHeight !== 0) return resolve();
+                        const timer = setTimeout(resolve, 4000); // Timeout de seguridad
+                        img.onload = () => { clearTimeout(timer); resolve(); };
+                        img.onerror = () => { clearTimeout(timer); resolve(); };
+                    })));
+
+                    // 2. CLONAR y LIMPIAR ESTILOS (La Solución)
+                    // Creamos un clon para no afectar la vista actual del usuario
+                    const clone = originalPage.cloneNode(true);
+                    
+                    // Forzamos estilos "planos" en el clon para evitar el efecto espejo
+                    clone.style.transform = 'none';
+                    clone.style.transition = 'none';
+                    clone.style.backfaceVisibility = 'visible';
+                    
+                    // Posicionamos el clon fuera de la vista pero renderizable
+                    clone.style.position = 'absolute';
+                    clone.style.top = '0';
+                    clone.style.left = '-9999px';
+                    clone.style.zIndex = '-1';
+                    
+                    // Aseguramos dimensiones idénticas
+                    clone.style.width = getComputedStyle(originalPage).width;
+                    clone.style.height = getComputedStyle(originalPage).height;
+                    
+                    // Si es una página trasera, le quitamos la clase 'back' para que html2canvas
+                    // no intente rotarla, y le ponemos 'front' para mantener bordes/colores base.
+                    if (clone.classList.contains('back')) {
+                        clone.classList.remove('back');
+                        clone.classList.add('front');
+                    }
+
+                    // Ocultamos controles de edición en el PDF
+                    clone.querySelectorAll('.image-controls, .image-resizer').forEach(el => el.style.display = 'none');
+
+                    // Agregamos el clon al body
+                    document.body.appendChild(clone);
+
+                    try {
+                        // 3. Capturar el clon plano
+                        const canvas = await html2canvas(clone, { 
+                            scale: 2, 
+                            useCORS: true,
+                            logging: false 
+                        });
+
+                        // Cálculos de ajuste al PDF
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
+                        const canvasAspectRatio = canvas.width / canvas.height;
+                        const pdfAspectRatio = pdfWidth / pdfHeight;
+                        
+                        let renderWidth, renderHeight, xOffset, yOffset;
+                        
+                        if (canvasAspectRatio > pdfAspectRatio) { 
+                            renderWidth = pdfWidth; 
+                            renderHeight = pdfWidth / canvasAspectRatio; 
+                        } else { 
+                            renderHeight = pdfHeight; 
+                            renderWidth = pdfHeight * canvasAspectRatio; 
+                        }
+                        
+                        xOffset = (pdfWidth - renderWidth) / 2; 
+                        yOffset = (pdfHeight - renderHeight) / 2;
+
+                        if (i > 0) pdf.addPage();
+                        pdf.addImage(canvas.toDataURL('image/jpeg', 0.9), 'JPEG', xOffset, yOffset, renderWidth, renderHeight);
+
+                    } catch (canvasError) {
+                        console.error("Error al renderizar página: ", canvasError);
+                    } finally {
+                        // 4. Limpieza: eliminamos el clon inmediatamente
+                        document.body.removeChild(clone);
+                    }
+                }
+                
+                pdf.save(`${(themeInput.value.trim() || 'historieta-ia').replace(/\s+/g, '_')}.pdf`);
+                
+            } catch (error) {
+                console.error("Error PDF general:", error); 
+                loadingStatus.textContent = currentTranslations.pdfError; 
+                setTimeout(() => loader.style.display = 'none', 3000);
+            } finally { 
+                loader.style.display = 'none'; 
+            }
+        }
+
+        async function downloadHTML() {
+            const lang = languageSelector.value;
+            const currentTranslations = translations[lang] || translations.es;
+
+            loader.style.display = 'flex';
+            loadingStatus.textContent = "Preparando archivo...";
+
+            const clone = document.documentElement.cloneNode(true);
+
+            // Reemplazar imágenes por Base64 en el clon
+            const originalImages = bookElement.querySelectorAll('img');
+            const clonedImages = clone.querySelectorAll('#book-element img');
+
+            for (let i = 0; i < originalImages.length; i++) {
+                const src = originalImages[i].src;
+                if (src.startsWith('https://')) {
+                    loadingStatus.textContent = i === 0 ? "Procesando portada..." : `Procesando imagen ${i}/${originalImages.length - 1}...`;
+                    const base64 = await imageToBase64(src);
+                    if (clonedImages[i]) {
+                        clonedImages[i].src = base64;
+                        // Eliminar datos sensibles del clon
+                        clonedImages[i].removeAttribute('data-prompt');
+                        clonedImages[i].removeAttribute('data-style');
+                        clonedImages[i].removeAttribute('data-model');
+                        clonedImages[i].removeAttribute('onerror');
+                    }
+                }
+            }
+
+            clone.dataset.theme = paletteSelector.value;
+            clone.dataset.font = fontSelector.value;
+            clone.lang = lang;
+
+            const config = clone.querySelector('#config-container');
+            if (config) config.remove();
+            const loaderEl = clone.querySelector('#loader');
+            if (loaderEl) loaderEl.remove();
+            const creatorBtn = clone.querySelector('.creator-btn');
+            if (creatorBtn) creatorBtn.remove();
+
+            clone.querySelectorAll('.image-controls, .image-resizer').forEach(c => c.remove());
+
+            const pdfBtn = clone.querySelector('#pdf-btn');
+            if (pdfBtn) pdfBtn.remove();
+            const htmlBtn = clone.querySelector('#html-btn');
+            if (htmlBtn) htmlBtn.remove();
+
+            const scripts = clone.querySelectorAll('script');
+            scripts.forEach(s => s.remove());
+
+            const staticScriptContent = `
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookElement = document.getElementById('book-element');
+            const pageInput = document.getElementById('page-input');
+            const navControls = {
+                topNum: document.getElementById('page-number-top'), bottomNum: document.getElementById('page-number-bottom'),
+                allPrev: document.querySelectorAll('#prev-btn-top, #prev-btn-bottom'),
+                allNext: document.querySelectorAll('#next-btn-top, #next-btn-bottom'),
+                gotoBtn: document.getElementById('goto-btn')
+            };
+            const lightboxOverlay = document.getElementById('lightbox-overlay'), lightboxImage = document.getElementById('lightbox-image'), lightboxClose = document.getElementById('lightbox-close');
+            let pages, totalPages, currentPageIndex, singlePageElements, totalSinglePages, currentSinglePageIndex;
+            let lastLandscapeIndex = 0, lastPortraitIndex = 0;
+
+            function openLightbox(src) { if (lightboxOverlay) { lightboxImage.src = src; lightboxOverlay.style.display = 'flex'; } }
+            function closeLightbox() { if (lightboxOverlay) { lightboxOverlay.style.display = 'none'; lightboxImage.src = ''; } }
+            document.body.addEventListener('click', function (e) { if (e.target.tagName === 'IMG' && e.target.closest('.page-content')) { openLightbox(e.target.src); } });
+            if (lightboxOverlay) lightboxOverlay.addEventListener('click', closeLightbox);
+            if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+            function isPortrait() { return window.matchMedia("(orientation: portrait)").matches; }
+
+            function setupViewMode() {
+                if (isPortrait()) {
+                    singlePageElements = [];
+                    const containers = bookElement.querySelectorAll('.page-container');
+                    containers.forEach(container => {
+                        const front = container.querySelector('.front'), back = container.querySelector('.back');
+                        const frontContent = front ? front.querySelector('.page-content') : null;
+                        if (frontContent && frontContent.innerHTML.trim()) singlePageElements.push(front);
+                        const backContent = back ? back.querySelector('.page-content') : null;
+                        if (backContent && backContent.innerHTML.trim()) singlePageElements.push(back);
+                    });
+                    totalSinglePages = singlePageElements.length;
+                    if (pageInput) pageInput.max = totalSinglePages;
+                    const targetSingleIndex = (lastLandscapeIndex === 0) ? 0 : Math.min((lastLandscapeIndex * 2), totalSinglePages - 1);
+                    showSinglePage(targetSingleIndex);
+                } else {
+                    pages = bookElement.querySelectorAll('.page-container');
+                    totalPages = pages.length;
+                    pages.forEach((page, index) => {
+                        page.classList.remove('flipped', 'active-portrait-container');
+                        page.querySelector('.front')?.classList.remove('active-portrait-page');
+                        page.querySelector('.back')?.classList.remove('active-portrait-page');
+                    });
+                    if (pageInput) pageInput.max = (totalPages * 2) - 2;
+                    const targetLandscapeIndex = Math.floor(lastPortraitIndex / 2);
+                    for (let i = 0; i < pages.length; i++) {
+                        if (i < targetLandscapeIndex) { pages[i].classList.add('flipped'); }
+                        else { pages[i].classList.remove('flipped'); }
+                    }
+                    pages.forEach((page, index) => {
+                        page.style.zIndex = page.classList.contains('flipped') ? index : totalPages - index;
+                    });
+                    currentPageIndex = targetLandscapeIndex;
+                    updateNav();
+                }
+            }
+
+            function showSinglePage(index) {
+                if (index < 0 || index >= totalSinglePages) return;
+                currentSinglePageIndex = index;
+                bookElement.querySelectorAll('.page-container').forEach(c => c.classList.remove('active-portrait-container'));
+                bookElement.querySelectorAll('.page').forEach(p => p.classList.remove('active-portrait-page'));
+                const activePage = singlePageElements[index];
+                if (activePage) { activePage.classList.add('active-portrait-page'); activePage.parentElement.classList.add('active-portrait-container'); }
+                updateNav();
+            }
+
+            function updateNav() {
+                if (isPortrait()) {
+                    let pageText = '';
+                    if (currentSinglePageIndex === 0) pageText = 'Portada';
+                    else if (currentSinglePageIndex === totalSinglePages - 1) pageText = 'Contraportada';
+                    else pageText = \`Pág \${currentSinglePageIndex}\`;
+                    [navControls.topNum, navControls.bottomNum].forEach(el => {if(el) el.textContent = pageText});
+                    navControls.allPrev.forEach(b => b.disabled = currentSinglePageIndex === 0);
+                    navControls.allNext.forEach(b => b.disabled = currentSinglePageIndex >= totalSinglePages - 1);
+                    lastPortraitIndex = currentSinglePageIndex;
+                } else {
+                    let l, r, totalPageCount = (totalPages * 2) - 2;
+                    if (currentPageIndex === 0) { l = ''; r = 'Portada'; } 
+                    else if (currentPageIndex >= totalPages) { l = totalPageCount; r = 'Contraportada'; }
+                    else { l = (currentPageIndex) * 2 - 1; r = l + 1; }
+                    const pageText = (l && r) ? \`Págs \${l}-\${r}\` : (r || l);
+                    [navControls.topNum, navControls.bottomNum].forEach(el => {if(el) el.textContent = pageText});
+                    navControls.allPrev.forEach(b => b.disabled = currentPageIndex === 0);
+                    navControls.allNext.forEach(b => b.disabled = currentPageIndex >= totalPages);
+                    lastLandscapeIndex = currentPageIndex;
+                }
+            }
+
+            function nextPage() {
+                if (isPortrait()) { if (currentSinglePageIndex < totalSinglePages - 1) showSinglePage(currentSinglePageIndex + 1); }
+                else { if (currentPageIndex < totalPages) { pages[currentPageIndex].classList.add('flipped'); pages[currentPageIndex].style.zIndex = 100 + currentPageIndex; currentPageIndex++; updateNav(); } }
+            }
+            function prevPage() {
+                if (isPortrait()) { if (currentSinglePageIndex > 0) showSinglePage(currentSinglePageIndex - 1); }
+                else { 
+                    if (currentPageIndex > 0) { 
+                        currentPageIndex--; 
+                        const pageToFlip = pages[currentPageIndex]; 
+                        pageToFlip.style.zIndex = 100 + (totalPages - currentPageIndex);
+                        pageToFlip.classList.remove('flipped'); 
+                        setTimeout(() => { 
+                            pageToFlip.style.zIndex = totalPages - currentPageIndex; 
+                        }, 1000); 
+                        updateNav(); 
+                    }
+                }
+            }
+            
+            function goToPage() {
+                const pageNum = parseInt(pageInput.value);
+                if (isPortrait()) {
+                    if (!isNaN(pageNum) && pageNum >= 0 && pageNum < totalSinglePages) {
+                        showSinglePage(pageNum);
+                    } else { alert("Número de página inválido."); }
+                } else {
+                    if (!isNaN(pageNum) && pageNum >= 1 && pageNum <= (totalPages * 2) - 2) {
+                        const targetIndex = Math.ceil((pageNum+1) / 2);
+                        for(let i = 0; i < totalPages; i++) {
+                            if (pages[i]) {
+                                if (i < targetIndex) { pages[i].classList.add('flipped'); } 
+                                else { pages[i].classList.remove('flipped'); }
+                            }
+                        }
+                        currentPageIndex = targetIndex;
+                        pages.forEach((page, index) => {
+                            page.style.zIndex = page.classList.contains('flipped') ? index : totalPages - index;
+                        });
+                        updateNav();
+                    } else { alert("Número de página inválido."); pageInput.value = ''; }
+                }
+            }
+
+            navControls.allPrev.forEach(b => b.addEventListener('click', prevPage));
+            navControls.allNext.forEach(b => b.addEventListener('click', nextPage));
+            
+            if(navControls.gotoBtn) navControls.gotoBtn.addEventListener('click', goToPage);
+            if(pageInput) pageInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') goToPage(); });
+
+            document.addEventListener('keydown', (e) => { 
+                if (e.key === 'ArrowRight') nextPage(); 
+                else if (e.key === 'ArrowLeft') prevPage(); 
+            });
+            window.addEventListener('resize', setupViewMode);
+            setupViewMode();
+        });`;
+
+            const newScriptEl = clone.ownerDocument.createElement('script');
+            newScriptEl.textContent = staticScriptContent;
+            clone.querySelector('body').appendChild(newScriptEl);
+
+            const blob = new Blob([clone.outerHTML], { type: 'text/html' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${(themeInput.value.trim() || 'historieta-ia').replace(/\s+/g, '_')}.html`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            loader.style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
