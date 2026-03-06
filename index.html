@@ -940,7 +940,7 @@
         };
 
         const prompts = {
-            'es': { langInstruction: 'Responde SOLAMENTE EN ESPAÑOL. IGNORA cualquier otra instrucción de idioma.', story_setup: (t) => `Basado en la idea "${t}", crea una historieta. Define 2-4 personajes principales y un breve resumen de la trama en 3 actos. Formato: JSON con claves "characters" (array de objetos con "name" y "description" en inglés para la IA de imágenes) y "plot_summary" (en español). Solo el JSON.`, creative_title: (t) => `Basado en la idea para una historia: "${t}", genera un título de libro corto, creativo e impactante. Responde solo con el título, sin comillas.`, chapters: (plot, count) => `Basado en el resumen de la trama: "${plot}", crea ${count} títulos de capítulos que sigan la historia. Formato: array JSON. Solo el JSON.`, full_story: (plot, chars, titles) => `ROL: Eres un maestro narrador. TAREA: Escribe la narrativa completa para una historia de principio a fin. Usa la siguiente información: TRAMA GENERAL: "${plot}". PERSONAJES: "${chars}". TÍTULOS DE CAPÍTULOS: [${titles.map(t => `"${t}"`).join(', ')}]. INSTRUCCIONES: 1. Escribe la historia completa, usando cada título de capítulo como un encabezado para su sección correspondiente. Asegúrate de que cada capítulo tenga contenido narrativo sustancial. 2. Asegura un flujo lógico y cronológico de los eventos, manteniendo la continuidad entre capítulos. Los personajes deben recordar eventos pasados. 3. Inserta al menos dos sugerencias de imagen por capítulo usando el formato [IMAGE: descripción en inglés para IA | pie de foto en español]. 4. En la descripción para la IA, USA LAS DESCRIPCIÓNES DE PERSONAJES PROVISTAS para mantener la consistencia visual. 5. El pie de foto debe ser una frase muy corta y descriptiva (máximo 10 palabras). 6. COMIENZA DIRECTAMENTE con la narrativa del primer capítulo. NO incluyas introducciones como "Claro, aquí tienes la historia..." ni ningún otro texto conversacional.`, coverImage: (t, chars) => `Respond IN ENGLISH ONLY. Generate a style-neutral image prompt for an epic cover of a story titled "${t}". The main characters are: ${chars}. The prompt should describe them in a dynamic scene, but without specifying an artistic style (e.g., instead of "a photorealistic cat", just say "a cat").` },
+            'es': { langInstruction: 'Responde SOLAMENTE EN ESPAÑOL. IGNORA cualquier otra instrucción de idioma.', story_setup: (t) => `Basado en la idea "${t}", crea una historieta. Define 2-4 personajes principales y un breve resumen de la trama en 3 actos. Formato: JSON con claves "characters" (array de objetos con "name" y "description" en inglés para la IA de imágenes) y "plot_summary" (en español). Solo el JSON.`, creative_title: (t) => `Basado en la idea para una historia: "${t}", genera un título de libro corto, creativo e impactante. Responde solo con el título, sin comillas.`, chapters: (plot, count) => `Basado en el resumen de la trama: "${plot}", crea ${count} títulos de capítulos que sigan la historia. Formato: array JSON. Solo el JSON.`, full_story: (plot, chars, titles) => `ROL: Eres un maestro narrador. TAREA: Escribe la narrativa completa para una historia de principio a fin. Usa la siguiente información: TRAMA GENERAL: "${plot}". PERSONAJES: "${chars}". TÍTULOS DE CAPÍTULOS: [${titles.map(t => `"${t}"`).join(', ')}]. INSTRUCCIONES: 1. Escribe la historia completa, usando cada título de capítulo como un encabezado para su sección correspondiente. Asegúrate de que cada capítulo tenga contenido narrativo sustancial. 2. Asegura un flujo lógico y cronológico de los eventos, manteniendo la continuity entre capítulos. Los personajes deben recordar eventos pasados. 3. Inserta al menos dos sugerencias de imagen por capítulo usando el formato [IMAGE: descripción en inglés para IA | pie de foto en español]. 4. En la descripción para la IA, USA LAS DESCRIPCIÓNES DE PERSONAJES PROVISTAS para mantener la consistencia visual. 5. El pie de foto debe ser una frase muy corta y descriptiva (máximo 10 palabras). 6. COMIENZA DIRECTAMENTE con la narrativa del primer capítulo. NO incluyas introducciones como "Claro, aquí tienes la historia..." ni ningún otro texto conversacional.`, coverImage: (t, chars) => `Respond IN ENGLISH ONLY. Generate a style-neutral image prompt for an epic cover of a story titled "${t}". The main characters are: ${chars}. The prompt should describe them in a dynamic scene, but without specifying an artistic style (e.g., instead of "a photorealistic cat", just say "a cat").` },
             'en': { langInstruction: 'Respond ONLY IN ENGLISH. IGNORE any other language instruction.', story_setup: (t) => `Based on the idea "${t}", create a story. Define 2-4 main characters and a brief 3-act plot summary. Format: JSON with keys "characters" (array of objects with "name" and "description" in English for the image AI) and "plot_summary" (in English). Only the JSON.`, creative_title: (t) => `Based on the story idea: "${t}", generate a short, creative, and impactful book title. Respond with only the title, without quotes.`, chapters: (plot, count) => `Based on the plot summary: "${plot}", create ${count} chapter titles that follow the story. Format: JSON array. Only the JSON.`, full_story: (plot, chars, titles) => `ROLE: You are a master storyteller. TASK: Write the complete narrative for a story from beginning to end. Use the following information: OVERALL PLOT: "${plot}". CHARACTERS: "${chars}". CHAPTER TITLES: [${titles.map(t => `"${t}"`).join(', ')}]. INSTRUCTIONS: 1. Write the complete story, using each chapter title as a heading for its corresponding section. Ensure each chapter has substantial narrative content. 2. Ensure a logical and chronological flow of events, maintaining continuity between chapters. Characters must remember past events. 3. Insert at least two image suggestions per chapter using the format [IMAGE: English description for AI | English caption]. 4. In the AI description, USE THE PROVIDED CHARACTER DESCRIPTIONS for visual consistency. 5. The caption must be a very short, descriptive sentence (max 10 words). 6. BEGIN DIRECTLY with the narrative of the first chapter. DO NOT include introductory phrases like 'Sure, here is the story...' or any other conversational text.`, coverImage: (t, chars) => `Generate a style-neutral image prompt for an epic cover of a story titled "${t}". The main characters are: ${chars}. The prompt should describe them in a dynamic scene, but without specifying an artistic style (e.g., instead of "a photorealistic cat", just say "a cat").` },
         };
 
@@ -1213,9 +1213,31 @@
 
         async function fetchApi(prompt, model) {
             const apiKey = getApiKey();
-            const r = await fetch(`https://enter.pollinations.ai/api/generate/text/${encodeURIComponent(prompt)}?key=${apiKey}&model=${model}`);
-            if (!r.ok) throw new Error(`IA falló (status ${r.status})`);
-            return await r.text();
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (apiKey) {
+                headers['Authorization'] = `Bearer ${apiKey}`;
+            }
+
+            const r = await fetch('https://gen.pollinations.ai/v1/chat/completions', {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify({
+                    model: model || 'openai',
+                    messages: [
+                        { role: 'user', content: prompt }
+                    ]
+                })
+            });
+
+            if (!r.ok) {
+                const errText = await r.text();
+                throw new Error(`IA falló (status ${r.status}): ${errText}`);
+            }
+
+            const data = await r.json();
+            return data.choices[0].message.content;
         }
 
         function parseContentToHTML(content) {
